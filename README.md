@@ -10,7 +10,7 @@ This project demonstrates a real-time document processing pipeline using:
 
 📁 Users upload `.docx` files via a web interface, and the app streams paragraph chunks to Kafka. Spark reads the stream, summarizes the content using OpenAI, and writes the result to a SQLite file. Streamlit monitors this file and displays the summary when ready.
 
-
+![Summarized Example](./resources/summarized.png)
 
 ---
 
@@ -69,7 +69,7 @@ This starts:
 - Streamlit app
 - A shared volume for SQLite
 
-Once you have your services running you can spin up the Spark job to process your requests
+Once you have your services running you can spin up the Spark job to listen for new file uploads
 
 ```bash
 ./scripts/job.sh
@@ -110,11 +110,10 @@ Once you have your services running you can spin up the Spark job to process you
 
 ---
 
-## 🖼️ Example Output
+## 🖼️ Example
 
-Below is an example of the app after uploading a `.docx` file and receiving a summarized output:
 
-![Summarized Example](./resources/summarized.png)
+![Usage Example](./resources/usage.gif)
 
 ---
 
