@@ -1,0 +1,78 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  spark-master:
+    build:
+      context: ./spark
+    environment:
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - SPARK_MODE=master
+    volumes:
+      - shared_data:/tmp/shared
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    develop:
+      watch:
+        - path: ./spark
+          action: sync
+          target: /app
+
+  spark-worker:
+    build:
+      context: ./spark
+    depends_on:
+      - spark-master
+    volumes:
+      - shared_data:/tmp/shared
+    environment:
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    ports:
+      - "8081:8081"
+    develop:
+      watch:
+        - path: ./spark
+          action: sync
+          target: /app
+
+  streamlit:
+    build:
+      context: ./app
+    ports:
+      - "$STREAMLIT_SERVER_PORT:$STREAMLIT_SERVER_PORT"
+    volumes:
+      - ./app:/app
+      - shared_data:/tmp/shared
+    environment:
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - STREAMLIT_SERVER_PORT=$STREAMLIT_SERVER_PORT
+    depends_on:
+      - kafka
+
+networks:
+  default:
+    name: spark_kafka_network
+
+volumes:
+  shared_data:

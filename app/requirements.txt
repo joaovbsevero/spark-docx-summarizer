@@ -1,0 +1,6 @@
+streamlit
+python-docx
+kafka-python
+openai
+pyspark
+scikit-learn
