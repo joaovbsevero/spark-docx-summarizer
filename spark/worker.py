@@ -13,7 +13,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize Spark session
 spark = (
-    SparkSession.builder.appName("SparkKafkaDocxSummarizer")
+    SparkSession.builder.appName("SparkKafkaDocxSummarizer")  # type: ignore
     .master("local[*]")
     .getOrCreate()
 )
@@ -92,6 +92,7 @@ def write_summary_to_db(summary_text):
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS summary (id INTEGER PRIMARY KEY AUTOINCREMENT, summary_text TEXT)"
     )
+    cursor.execute("DELETE FROM summary")
     cursor.execute("INSERT INTO summary (summary_text) VALUES (?)", (summary_text,))
     conn.commit()
     conn.close()
