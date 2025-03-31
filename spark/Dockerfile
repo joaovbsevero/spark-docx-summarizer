@@ -4,8 +4,6 @@ FROM bitnami/spark:latest
 USER root
 RUN mkdir -p /tmp/shared && chmod -R 777 /tmp/shared
 
-# Switch back to the default non-root user (adjust as needed)
-USER 1001
 
 # Install requirements
 COPY requirements.txt .

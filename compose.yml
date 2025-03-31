@@ -60,13 +60,13 @@ services:
     build:
       context: ./app
     ports:
-      - "$STREAMLIT_SERVER_PORT:$STREAMLIT_SERVER_PORT"
+      - "8501:8501"
     volumes:
       - ./app:/app
       - shared_data:/tmp/shared
     environment:
       - OPENAI_API_KEY=$OPENAI_API_KEY
-      - STREAMLIT_SERVER_PORT=$STREAMLIT_SERVER_PORT
+      - STREAMLIT_SERVER_PORT=8501
     depends_on:
       - kafka
 
